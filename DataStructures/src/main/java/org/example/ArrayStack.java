@@ -8,8 +8,7 @@ import java.util.Collection;
  * ArrayStack implements the list interface using a backing array 'a',  The list element with index i is stored in a[i].
  * At most times, 'a' is larger than strictly necessary, so an integer, n, is used to keep track of the number of elements actually stored in 'a'.
  * In this way, the list elements are stored in a[0],..., a[n-1] and, at all times, a.length <= n.
- *
- * @param <T> the type of object stored in the list
+ * @param <T> the type of data stored in the list
  */
 public class ArrayStack<T> extends AbstractList<T> {
 
@@ -120,37 +119,17 @@ public class ArrayStack<T> extends AbstractList<T> {
         a = b;
     }
 
-    //Most of the work done by an ArrayStack involves the shifting and copying of data (by add(i,x), remove(i) and resize()).
-    //In the implementations above, this was done using for loops.
-    //Turns out that many programming environments have specific functions that are very efficient at copying and moving blocks of data.
-    //In Java there is the System.arraycopy(s,i,d,j,n) method.
-    //Although using this functions does not asymptotically decrease the running times, it can still be a worthwhile optimization.
-    //The use of the native System.arraycopy(s,i,d,j,n) resulted in speedups of a factor between 2 and 3, depending on the types of operations performed.
-    //Mileage may vary.
-
     /**
      * Resize the backing array.
      */
     protected void resize(int nn){
         T[] b = f.newArray(nn);
-        System.arraycopy(a, 0, b, 0, n);
+        for(int i =0; i < n; i++){
+            b[i] = a[i];
+        }
         a = b;
     }
-    public void addOptimised(int i, T x){
-        checkOutOfBounds(i);
-        if(n + 1 > a.length) resize();
-        System.arraycopy(a, i+1, a, i, n-i-1);
-        a[i] = x;
-        n++;
-    }
-    public T removeOptimised(int i){
-        checkOutOfBounds(i);
-        T x = a[i];
-        System.arraycopy(a, i+1, a, i, n-i-1);
-        n--;
-        if(a.length >= 3*n) resize();
-        return x;
-    }
+
 
     //The following methods are not strictly necessary.
     //The parent class, AbstractList, has default implementations of them, but
